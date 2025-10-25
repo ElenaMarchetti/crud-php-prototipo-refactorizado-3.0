@@ -9,20 +9,33 @@
 *    Iteration   : 3.0 ( prototype )
 */
 
-require_once("./models/students.php");
+require_once __DIR__ . "/../models/students.php";
 
 function handleGet($conn) 
 {
-    $input = json_decode(file_get_contents("php://input"), true);
-    
-    if (isset($input['id'])) 
+    if (isset($_GET['id'])) /*se pide un alumno en específico */ 
     {
-        $student = getStudentById($conn, $input['id']);
+        $student = getStudentById($conn, $_GET['id']); 
         echo json_encode($student);
     } 
-    else
+    //2.0  /* se pide una página en específico */
+    else if (isset($_GET['page']) && isset($_GET['limit'])) 
     {
-        $students = getAllStudents($conn);
+        $page = (int)$_GET['page'];
+        $limit = (int)$_GET['limit'];
+        $offset = ($page - 1) * $limit;
+
+        $students = getPaginatedStudents($conn, $limit, $offset);
+        $total = getTotalStudents($conn);
+
+        echo json_encode([
+            'students' => $students, // ya es array
+            'total' => $total        // ya es entero
+        ]);
+    }
+    else /*de lo contario se muestran todos los alumnos */
+    {
+        $students = getAllStudents($conn); // ya es array
         echo json_encode($students);
     }
 }
