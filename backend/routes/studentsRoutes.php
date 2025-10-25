@@ -8,9 +8,9 @@
 *    Status      : Prototype
 *    Iteration   : 3.0 ( prototype )
 */
-require_once("./config/databaseConfig.php");
-require_once("./routes/routesFactory.php");
-require_once("./controllers/studentsController.php");
+require_once __DIR__ . "/../config/databaseConfig.php";
+require_once __DIR__ . "/routesFactory.php";
+require_once __DIR__ . "/../controllers/studentsController.php";
 
 routeRequest($conn);
 
