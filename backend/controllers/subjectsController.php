@@ -13,13 +13,26 @@ require_once("./models/subjects.php");
 
 function handleGet($conn) 
 {
-    $input = json_decode(file_get_contents("php://input"), true);
-
-    if (isset($input['id'])) 
+    if (isset($_GET['id'])) /*se pide una materia en específico */ 
     {
-        $subject = getSubjectById($conn, $input['id']);
+        $subject = getSubjectById($conn, $_GET['id']);
         echo json_encode($subject);
     } 
+    //2.0  /* se pide una página en específico */
+    else if (isset($_GET['page']) && isset($_GET['limit'])) 
+    {
+        $page = (int)$_GET['page'];
+        $limit = (int)$_GET['limit'];
+        $offset = ($page - 1) * $limit;
+
+        $subjects = getPaginatedSubjects($conn, $limit, $offset);
+        $total = getTotalSubjects($conn);
+
+        echo json_encode([
+            'subjects' => $subjects, // ya es array
+            'total' => $total        // ya es entero
+        ]);
+    }
     else 
     {
         $subjects = getAllSubjects($conn);
